@@ -27,7 +27,7 @@ namespace :artists do
               "Carlos Vives",
               "Muse"
     ]
-    puts ENV['ROOT_URL']
+
     RSpotify.authenticate("37a318ec153f4cfda51cc89bf51f9da1", "f9d072897164452f96cf592f1d73c5ee")
 
     Artist.delete_all

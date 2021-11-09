@@ -20,7 +20,7 @@ module Api
 
           info_artist += "<strong>popularity:</strong> #{art.popularity}<br>"
           info_artist += "<strong>spotify_url:</strong> <a href=#{art.spotify_url}>#{art.spotify_url}</a> <br>"
-          info_artist += "<a href=http://localhost:3000/api/v1/artists/#{art.spotify_id}/albums>Ver albumes</a><br>"
+          info_artist += "<a href=#{request.base_url}/api/v1/artists/#{art.spotify_id}/albums>Ver albumes</a><br>"
           info_artist += "-----------------------------------------------------------------<br>"
         end
 
@@ -49,7 +49,7 @@ module Api
             info_album += "<strong>total_tracks:</strong> SIN DATOS<br>"
           end
 
-          info_album += "<strong>Songs of the album:</strong> <a href=http://localhost:3000/api/v1/albums/#{alb.spotify_id}/songs>#{alb.spotify_id}</a><br>"
+          info_album += "<strong>Songs of the album:</strong> <a href=#{request.base_url}/api/v1/albums/#{alb.spotify_id}/songs>#{alb.spotify_id}</a><br>"
           info_album += "--------------------------------------------------------------------<br>"
         end
 

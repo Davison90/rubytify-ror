@@ -1,6 +1,4 @@
-
 require 'json'
-require 'HtmlRender'
 
 module Api
   module V1

@@ -22,4 +22,29 @@ module Api
       end
     end
   end
+
+  module V2
+    class SongsController < ApplicationController
+
+      def index
+        @songs = RSpotify::Base.search(params[:genre], 'track')
+        loop do
+          @random_song = @songs.shuffle.first
+          break if !@random_song.preview_url.nil?
+        end
+
+        array = [ "name" => @random_song.name,
+                  "external_urls" => @random_song.external_urls['spotify'],
+                  "preview_url" => @random_song.preview_url,
+                  "duration_ms" => @random_song.duration_ms,
+                  "explicit" => @random_song.explicit
+        ]
+
+        info= {"data" => array}
+        data = ap(JSON.parse(info.to_json))
+        render json: JSON.pretty_generate(data.as_json)
+
+      end
+    end
+  end
 end

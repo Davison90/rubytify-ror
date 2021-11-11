@@ -38,4 +38,17 @@ module Api
       end
     end
   end
+
+  module V2
+    class AlbumsController < ApplicationController
+
+      def index
+        RSpotify.authenticate("37a318ec153f4cfda51cc89bf51f9da1", "f9d072897164452f96cf592f1d73c5ee")
+        @songs = Song.where(spotify_id_album: params[:spotify_id_album])
+        info= {"data" => @songs}
+        data = ap(JSON.parse(info.to_json))
+        render json: JSON.pretty_generate(data.as_json)
+      end
+    end
+  end
 end

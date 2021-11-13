@@ -99,6 +99,7 @@ namespace :artists do
         raise
       end
     }
+    
     puts "Total artist created: #{count_artist} of #{artist.length}"
     
   end

@@ -38,23 +38,28 @@ namespace :artists do
       begin
         unless art.nil?
           artists = RSpotify::Base.search(art, 'artist')
-          artists_image = artists[x].instance_variable_get(:@images)
+          artists_image = artists[0].instance_variable_get(:@images)
+
+          unless artists_image.nil?
+            image = artists_image[artists_image.length - 1]['url']
+          else
+            image = ""
+          end
 
           Artist.create(name: art,
-            image: artists_image[2]['url'],
-            genres: artists[x].instance_variable_get(:@genres),
-            popularity: artists[x].instance_variable_get(:@popularity),
-            spotify_url: artists[x].instance_variable_get(:@href),
-            spotify_id: artists[x].instance_variable_get(:@id)
+            image: image,
+            genres: artists[0].instance_variable_get(:@genres),
+            popularity: artists[0].instance_variable_get(:@popularity),
+            spotify_url: artists[0].instance_variable_get(:@href),
+            spotify_id: artists[0].instance_variable_get(:@id)
           )
-
+          
           albums = RSpotify::Base.search(art, 'album')
-
           albums.each_with_index { |alb, y|
             albums_image = albums[y].instance_variable_get(:@images)
 
             Album.create(spotify_id: albums[y].instance_variable_get(:@id),
-              spotify_id_artist: artists[x].instance_variable_get(:@id),
+              spotify_id_artist: artists[0].instance_variable_get(:@id),
               name: albums[y].instance_variable_get(:@name),
               image: albums_image[2]['url'],
               spotify_url: albums[y].instance_variable_get(:@href),
@@ -73,6 +78,7 @@ namespace :artists do
               spotify_id_album: songs[z].instance_variable_get(:@album).instance_variable_get(:@id)
             )
           }
+          
           count_artist = count_artist + 1
 
           puts "\n Creado artista: #{art}"

@@ -1,7 +1,7 @@
 require 'json'
 
 module Api
-  module V1
+  module V2
     class SongsController < ApplicationController
 
       def index
@@ -23,7 +23,7 @@ module Api
     end
   end
 
-  module V2
+  module V1
     class SongsController < ApplicationController
 
       def index

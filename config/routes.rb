@@ -5,10 +5,10 @@ Rails.application.routes.draw do
     namespace :v1  do
       resources :artists
       get "artists/albums", to: "artists#show_albums"
-      get "artists/:spotify_id_artist/albums", to: "artists#show_albums"
+      get "artists/:artist_id/albums", to: "artists#show_albums"
       
       resources :albums
-      get "albums/:spotify_id_album/songs", to: "albums#index"
+      get "albums/:album_id/songs", to: "albums#index"
 
       resources :songs
       get "genres/:genre/random_song", to: "songs#index"
@@ -17,10 +17,10 @@ Rails.application.routes.draw do
     namespace :v2  do
       resources :artists
       get "artists/albums", to: "artists#show_albums"
-      get "artists/:spotify_id_artist/albums", to: "artists#show_albums"
+      get "artists/:artist_id/albums", to: "artists#show_albums"
       
       resources :albums
-      get "albums/:spotify_id_album/songs", to: "albums#index"
+      get "albums/:album_id/songs", to: "albums#index"
 
       resources :songs
       get "genres/:genre/random_song", to: "songs#index"

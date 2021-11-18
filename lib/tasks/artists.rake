@@ -1,38 +1,19 @@
 namespace :artists do
+  task :clean => :environment do
+    Song.delete_all
+    Album.delete_all
+    Artist.delete_all
+  end
+
   task :artist => :environment do
-
     count_artist = 0
-
-    artist = ["Artic Monkeys",
-              "Metallica      ",
-              "Nirvana",
-              "Diomedes Diaz",
-              "AC/DC",
-              "311",
-              "Calle 13",
-              "BTS",
-              "El ultimo de la fila",
-              "Atercipelados",
-              "Alci Acosta",
-              "Green Day",
-              "Tormenta",
-              "Chuck Berry",
-              "Joe Cuba",
-              "Compay Segundo",
-              "Buena Vista Social Club",
-              "Masacre",
-              "Pantera",
-              "Ruben Blades",
-              "Los Hermanos Zuleta",
-              "Carlos Vives",
-              "Muse"
-    ]
+    artist = CONFIG["list"]
 
     RSpotify.authenticate("37a318ec153f4cfda51cc89bf51f9da1", "f9d072897164452f96cf592f1d73c5ee")
 
-    Artist.delete_all
-    Album.delete_all
     Song.delete_all
+    Album.delete_all
+    Artist.delete_all
 
     artist.each_with_index { |art, x|
       begin
@@ -54,33 +35,39 @@ namespace :artists do
             spotify_id: artists[0].instance_variable_get(:@id)
           )
           
+          arti = Artist.find_by_name(art)
           albums = RSpotify::Base.search(art, 'album')
           albums.each_with_index { |alb, y|
             albums_image = albums[y].instance_variable_get(:@images)
-
             Album.create(spotify_id: albums[y].instance_variable_get(:@id),
               spotify_id_artist: artists[0].instance_variable_get(:@id),
               name: albums[y].instance_variable_get(:@name),
               image: albums_image[2]['url'],
               spotify_url: albums[y].instance_variable_get(:@href),
-              total_tracks: albums[y].instance_variable_get(:@total_tracks)
+              total_tracks: albums[y].instance_variable_get(:@total_tracks),
+              artist_id: arti.id
             )
           }
 
-          songs = RSpotify::Base.search(art, 'track')
+          songs = RSpotify::Base.search(art, 'track')      
           songs.each_with_index { |song, z|
-            Song.create(name: songs[z].instance_variable_get(:@name),
-              spotify_url: songs[z].instance_variable_get(:@href),
-              preview_url: songs[z].instance_variable_get(:@preview_url),
-              durations_ms: songs[z].instance_variable_get(:@duration_ms),
-              explicit: songs[z].instance_variable_get(:@explicit).to_s,
-              spotify_id: songs[z].instance_variable_get(:@id),
-              spotify_id_album: songs[z].instance_variable_get(:@album).instance_variable_get(:@id)
-            )
+            spotify_id_album = songs[z].instance_variable_get(:@album).instance_variable_get(:@id)
+            album_id = Album.select('id').where(spotify_id: spotify_id_album)
+            
+            unless album_id.empty?
+              Song.create(name: songs[z].instance_variable_get(:@name),
+                spotify_url: songs[z].instance_variable_get(:@href),
+                preview_url: songs[z].instance_variable_get(:@preview_url).to_s,
+                durations_ms: songs[z].instance_variable_get(:@duration_ms).to_s,
+                explicit: songs[z].instance_variable_get(:@explicit).to_s,
+                spotify_id: songs[z].instance_variable_get(:@id),
+                spotify_id_album: songs[z].instance_variable_get(:@album).instance_variable_get(:@id),
+                album_id:  album_id[0]['id'].inspect
+              )
+            end
           }
           
           count_artist = count_artist + 1
-
           puts "\n Creado artista: #{art}"
           puts "----------------------------------------------------"
         end
@@ -99,8 +86,6 @@ namespace :artists do
         raise
       end
     }
-    
     puts "Total artist created: #{count_artist} of #{artist.length}"
-    
   end
 end
